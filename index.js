@@ -86,7 +86,6 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-// Запуск сервера з отриманими параметрами
 server.listen(port, host, () => {
   console.log(`Сервер запущено на http://${host}:${port}`);
 });
