@@ -14,12 +14,12 @@ program
 
 const { host, port, cache } = program.opts();
 
-// Перевірка наявності директорії кешу та її створення, якщо потрібно
+
 if (!fs.existsSync(cache)) {
   fs.mkdirSync(cache, { recursive: true });
 }
 
-// Функція для отримання картинки
+
 const getImage = async (statusCode) => {
   try {
     const response = await superagent.get(`https://http.cat/${statusCode}`);
@@ -29,20 +29,20 @@ const getImage = async (statusCode) => {
   }
 };
 
-// Створення веб-сервера
+
 const server = http.createServer(async (req, res) => {
   const statusCode = req.url.slice(1); // Отримуємо код статусу з URL
   const imagePath = path.join(cache, `${statusCode}.jpg`); // Шлях до кешу
 
   switch (req.method) {
     case 'GET':
-      // Перевіряємо наявність картинки в кеші
+      
       if (fs.existsSync(imagePath)) {
         const image = await fs.promises.readFile(imagePath);
         res.writeHead(200, { 'Content-Type': 'image/jpeg' });
         res.end(image);
       } else {
-        // Якщо картинки немає в кеші, запитуємо з http.cat
+
         const image = await getImage(statusCode);
         if (image) {
           await fs.promises.writeFile(imagePath, image); // Зберігаємо в кеш
@@ -56,7 +56,7 @@ const server = http.createServer(async (req, res) => {
       break;
 
     case 'PUT':
-      // Запис картинки у кеш
+     
       const chunks = [];
       req.on('data', (chunk) => chunks.push(chunk));
       req.on('end', async () => {
@@ -68,7 +68,7 @@ const server = http.createServer(async (req, res) => {
       break;
 
     case 'DELETE':
-      // Видалення картинки з кешу
+
       if (fs.existsSync(imagePath)) {
         await fs.promises.unlink(imagePath);
         res.writeHead(200, { 'Content-Type': 'text/plain' });
